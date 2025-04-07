@@ -1,57 +1,47 @@
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
+import {useRouter} from 'vue-router';
 
-const email = ref('');
-const password = ref('');
-const status = ref(null);
-const jsonData = ref(null);
+const router = useRouter();
+const form = ref({
+  email: '',
+  password: ''
+});
+const error = ref('');
 const isLoading = ref(false);
 
-function updateStatus(ok) {
-  if (ok) {
-    status.value.innerText = "Авторизован!";
-    status.value.className = "success";
-  } else {
-    status.value.innerText = "Не авторизован!";
-    status.value.className = "error";
-  }
-}
-
-async function onSubmit(event) {
-  event.preventDefault();
+async function handleLogin() {
   isLoading.value = true;
+  error.value = '';
 
   try {
-    const res = await fetch("https://87bb0d4c94472c27.mokky.dev/auth", { // Исправлен эндпоинт
-      method: "POST",
+    const response = await fetch('https://87bb0d4c94472c27.mokky.dev/auth', {
+      method: 'POST',
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: email.value,
-        password: password.value
+        email: form.value.email,
+        password: form.value.password
       })
     });
 
-    updateStatus(res.ok);
-
-    if (res.ok) {
-      const json = await res.json();
-      console.log("Успешная авторизация:", json);
-      jsonData.value = json;
-
-      // Сохраняем токен (если сервер его возвращает)
-      if (json.token) {
-        localStorage.setItem('token', json.token);
-      }
-    } else {
-      const error = await res.json();
-      console.error("Ошибка авторизации:", error);
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.message || 'Неверный email или пароль');
     }
-  } catch (error) {
-    console.error("Сетевая ошибка:", error);
-    updateStatus(false);
+
+    const data = await response.json();
+    console.log('Успешный вход:', data);
+
+    // Сохраняем токен (пример)
+    localStorage.setItem('authToken', data.token);
+
+    router.push('/'); // Перенаправляем на главную
+
+  } catch (err) {
+    error.value = err.message;
+    console.error('Ошибка:', err);
   } finally {
     isLoading.value = false;
   }
@@ -59,31 +49,18 @@ async function onSubmit(event) {
 </script>
 
 <template>
-  <form @submit="onSubmit">
-    <input
-        type="email"
-        placeholder="Email"
-        v-model="email"
-        required
-    />
-    <input
-        type="password"
-        placeholder="Пароль"
-        v-model="password"
-        required
-    />
-    <button type="submit" :disabled="isLoading">
-      {{ isLoading ? 'Загрузка...' : 'Войти' }}
-    </button>
-  </form>
-
-  <hr />
-
-  <h2 ref="status" class="error">Не авторизован</h2>
-
-  <pre v-if="jsonData">{{ JSON.stringify(jsonData, null, 2) }}</pre>
-
-  <router-link to="/">На главную</router-link>
+  <div class="auth-form">
+    <h2>Вход</h2>
+    <form @submit.prevent="handleLogin">
+      <input v-model="form.email" type="email" placeholder="Email" required>
+      <input v-model="form.password" type="password" placeholder="Пароль" required>
+      <button type="submit" :disabled="isLoading">
+        {{ isLoading ? 'Вход...' : 'Войти' }}
+      </button>
+      <p v-if="error" class="error">{{ error }}</p>
+    </form>
+    <router-link to="/register">Нет аккаунта? Зарегистрироваться</router-link>
+  </div>
 </template>
 
 <style scoped>
