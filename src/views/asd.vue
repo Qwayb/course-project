@@ -6,7 +6,7 @@ const router = useRouter();
 const form = ref({
   email: '',
   password: '',
-  name: ''
+  name: '' // Добавляем имя, если требуется
 });
 const error = ref('');
 const isLoading = ref(false);
@@ -24,7 +24,7 @@ async function handleRegister() {
       body: JSON.stringify({
         email: form.value.email,
         password: form.value.password,
-        name: form.value.name
+        name: form.value.name // Убедитесь, что сервер ожидает это поле
       })
     });
 
@@ -35,7 +35,7 @@ async function handleRegister() {
 
     const data = await response.json();
     console.log('Успешная регистрация:', data);
-    router.push('/login');
+    router.push('/login'); // Перенаправляем на страницу входа
 
   } catch (err) {
     error.value = err.message;
@@ -47,21 +47,28 @@ async function handleRegister() {
 </script>
 
 <template>
-  <h1>main screen</h1>
-  <form @submit.prevent="handleRegister">
-    <input v-model="form.name" type="text" placeholder="Имя" required>
-    <input v-model="form.email" type="email" placeholder="Email" required>
-    <input v-model="form.password" type="password" placeholder="Пароль" required>
-    <button type="submit" :disabled="isLoading">
-      {{ isLoading ? 'Регистрация...' : 'Зарегистрироваться' }}
-    </button>
-    <p v-if="error" class="error">{{ error }}</p>
-  </form>
-  <router-link to="/login">Уже есть аккаунт? Войти</router-link>
-  <br>
-  <router-link to="/">main</router-link>
+  <div class="auth-form">
+    <h2>Регистрация</h2>
+    <form @submit.prevent="handleRegister">
+      <input v-model="form.name" type="text" placeholder="Имя" required>
+      <input v-model="form.email" type="email" placeholder="Email" required>
+      <input v-model="form.password" type="password" placeholder="Пароль" required>
+      <button type="submit" :disabled="isLoading">
+        {{ isLoading ? 'Регистрация...' : 'Зарегистрироваться' }}
+      </button>
+      <p v-if="error" class="error">{{ error }}</p>
+    </form>
+    <router-link to="/login">Уже есть аккаунт? Войти</router-link>
+  </div>
 </template>
 
 <style scoped>
-
+.auth-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.error {
+  color: red;
+}
 </style>
