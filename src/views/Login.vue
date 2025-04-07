@@ -51,7 +51,7 @@ async function handleLogin() {
 <template>
   <div class="auth-form">
     <h2>Вход</h2>
-    <form @submit.prevent="handleLogin">
+    <form class="input-block" @submit.prevent="handleLogin">
       <input v-model="form.email" type="email" placeholder="Email" required>
       <input v-model="form.password" type="password" placeholder="Пароль" required>
       <button type="submit" :disabled="isLoading">
@@ -59,10 +59,22 @@ async function handleLogin() {
       </button>
       <p v-if="error" class="error">{{ error }}</p>
     </form>
-    <router-link to="/register">Нет аккаунта? Зарегистрироваться</router-link>
+    <router-link to="/register">Нет аккаунта? <span class="underline">Зарегистрироваться</span></router-link>
   </div>
 </template>
 
 <style scoped>
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 417px;
+  margin: 0 auto;
+}
 
+.input-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 </style>

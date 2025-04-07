@@ -1,0 +1,53 @@
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased; /* Для лучшей читаемости */
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #ECF0F3;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 64px;
+    margin-bottom: 64px;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+input {
+    background-color: #ECF0F3;
+    outline: none;
+    /*border: 1px solid #000000;*/
+    border-radius: 15px;
+    padding: 12px 15px;
+    box-shadow: inset 4px 4px 11px rgba(172, 178, 189, 0.5);
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: inset 4px 4px 11px rgba(172, 178, 189, 0.5);
+}
+
+button {
+    background-color: #ECF0F3;
+    border-radius: 15px;
+    box-shadow:
+            18px 18px 30px #D1D9E6,
+            -18px -18px 30px #FFFFFF;
+    max-width: fit-content;
+    padding: 7px 10px;
+
+    transition: box-shadow 0.9s ease-in-out !important;
+}
+
+button:hover {
+    box-shadow: inset 4px 4px 11px rgba(172, 178, 189, 0.5);
+}

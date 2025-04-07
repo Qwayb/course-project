@@ -1,0 +1,83 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: none;
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+    outline: none;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+    margin: 0 0 0 0;
+}
+
+button {
+    outline: none;         /* Убирает стандартный outline */
+    border: none;          /* Убирает границу (если она есть) */
+    background: none;      /* Убирает фоновые эффекты (например, в Safari) */
+    padding: 0;            /* Обнуляет отступы (иногда влияют на визуал) */
+    margin: 0;             /* Обнуляет внешние отступы */
+    appearance: none;      /* Отключает браузерные стили (важно для Safari) */
+    -webkit-appearance: none; /* Для старых WebKit-браузеров */
+    cursor: pointer;       /* Чтобы курсор был pointer, а не стандартный */
+}
+
+/* Убирает фокус-кольцо в Firefox */
+button::-moz-focus-inner {
+    border: 0;
+}
+
+/* Убирает фокус в Chrome/Safari */
+button:focus {
+    outline: none;
+    box-shadow: none;      /* На случай, если обводка через box-shadow */
+}
+
+/* Убирает эффект при нажатии (активном состоянии) */
+button:active {
+    outline: none;
+    transform: none;       /* Если есть трансформации */
+}
+
+/* Полный сброс стилей для input */
+input {
+    outline: none;          /* Убирает стандартный outline */
+    border: none;           /* Убирает границу */
+    background: none;       /* Убирает фон (если он мешает) */
+    padding: 0;             /* Обнуляет внутренние отступы */
+    margin: 0;              /* Обнуляет внешние отступы */
+    appearance: none;       /* Отключает браузерные стили (особенно важно для Safari) */
+    -webkit-appearance: none; /* Для старых версий WebKit */
+}
+
+/* Убирает обводку в Firefox */
+input::-moz-focus-inner {
+    border: 0;
+}
+
+/* Убирает фокус-эффекты */
+input:focus {
+    outline: none;
+    box-shadow: none;       /* На случай, если обводка через box-shadow */
+}
+
+/* Убирает эффекты при нажатии */
+input:active {
+    outline: none;
+}
