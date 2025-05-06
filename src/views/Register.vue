@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Header from "@/components/Header.vue";
 
 const router = useRouter();
 const form = ref({
@@ -47,6 +48,8 @@ async function handleRegister() {
 </script>
 
 <template>
+  <Header/>
+
   <h1>main screen</h1>
   <form @submit.prevent="handleRegister">
     <input v-model="form.name" type="text" placeholder="Имя" required>

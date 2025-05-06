@@ -1,4 +1,7 @@
 body {
+    width: 73.5%;
+    margin: 64px auto 0 auto;
+    font-size: 12px;
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased; /* Для лучшей читаемости */
     -moz-osx-font-smoothing: grayscale;
@@ -48,6 +51,30 @@ button {
     transition: box-shadow 0.9s ease-in-out !important;
 }
 
+.button {
+    background-color: #ECF0F3;
+    border-radius: 15px;
+    box-shadow:
+            18px 18px 30px #D1D9E6,
+            -18px -18px 30px #FFFFFF;
+    max-width: fit-content;
+    padding: 7px 10px;
+
+    transition: box-shadow 0.9s ease-in-out !important;
+}
+
 button:hover {
     box-shadow: inset 4px 4px 11px rgba(172, 178, 189, 0.5);
+}
+
+.button:hover {
+    box-shadow: inset 4px 4px 11px rgba(172, 178, 189, 0.5);
+}
+
+.defShadow {
+    background-color: #ECF0F3;
+    border-radius: 15px;
+    box-shadow:
+            18px 18px 30px #D1D9E6,
+            -18px -18px 30px #FFFFFF;
 }

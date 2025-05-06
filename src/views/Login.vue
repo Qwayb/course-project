@@ -1,6 +1,7 @@
 <script setup>
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
+import Header from "@/components/Header.vue";
 
 const router = useRouter();
 const form = ref({
@@ -49,6 +50,8 @@ async function handleLogin() {
 </script>
 
 <template>
+  <Header/>
+
   <div class="auth-form">
     <h2>Вход</h2>
     <form class="input-block" @submit.prevent="handleLogin">
@@ -75,6 +78,11 @@ async function handleLogin() {
 .input-block {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.input-block > input, button{
   width: 100%;
 }
 </style>
