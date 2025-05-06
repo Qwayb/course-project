@@ -78,3 +78,11 @@ button:hover {
             18px 18px 30px #D1D9E6,
             -18px -18px 30px #FFFFFF;
 }
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 417px;
+    margin: 0 auto;
+}

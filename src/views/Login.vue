@@ -52,7 +52,7 @@ async function handleLogin() {
 <template>
   <Header/>
 
-  <div class="auth-form">
+  <div class="form">
     <h2>Вход</h2>
     <form class="input-block" @submit.prevent="handleLogin">
       <input v-model="form.email" type="email" placeholder="Email" required>
@@ -67,13 +67,7 @@ async function handleLogin() {
 </template>
 
 <style scoped>
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 417px;
-  margin: 0 auto;
-}
+
 
 .input-block {
   display: flex;
@@ -84,5 +78,9 @@ async function handleLogin() {
 
 .input-block > input, button{
   width: 100%;
+}
+
+.input-block > button{
+  margin: 64px 0 64px 0;
 }
 </style>

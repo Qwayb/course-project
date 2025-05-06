@@ -50,21 +50,34 @@ async function handleRegister() {
 <template>
   <Header/>
 
-  <h1>main screen</h1>
-  <form @submit.prevent="handleRegister">
-    <input v-model="form.name" type="text" placeholder="Имя" required>
-    <input v-model="form.email" type="email" placeholder="Email" required>
-    <input v-model="form.password" type="password" placeholder="Пароль" required>
-    <button type="submit" :disabled="isLoading">
-      {{ isLoading ? 'Регистрация...' : 'Зарегистрироваться' }}
-    </button>
-    <p v-if="error" class="error">{{ error }}</p>
-  </form>
-  <router-link to="/login">Уже есть аккаунт? Войти</router-link>
-  <br>
-  <router-link to="/">main</router-link>
+  <div class="form">
+    <h2>Регистрация</h2>
+    <form class="input-block" @submit.prevent="handleRegister">
+      <input v-model="form.name" type="text" placeholder="Имя" required>
+      <input v-model="form.email" type="email" placeholder="Email" required>
+      <input v-model="form.password" type="password" placeholder="Пароль" required>
+      <button type="submit" :disabled="isLoading">
+        {{ isLoading ? 'Регистрация...' : 'Зарегистрироваться' }}
+      </button>
+      <p v-if="error" class="error">{{ error }}</p>
+    </form>
+    <router-link to="/login">Уже есть аккаунт? <span class="underline">Войти</span></router-link>
+  </div>
 </template>
 
 <style scoped>
+.input-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
 
+.input-block > input, button{
+  width: 100%;
+}
+
+.input-block > button{
+  margin: 64px 0 64px 0;
+}
 </style>

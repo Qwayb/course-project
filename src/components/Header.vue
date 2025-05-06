@@ -1,5 +1,8 @@
 <script setup>
+import { ref } from 'vue';
+import Header from "@/components/Header.vue";
 
+const isAuthenticated = ref(!!localStorage.getItem('authToken'));
 </script>
 
 <template>
@@ -12,9 +15,12 @@
       <router-link class="button" to="/">Желания</router-link>
     </div>
 
-    <div class="nav_elements">
+    <div v-if="!isAuthenticated" class="nav_elements">
       <router-link class="button" to="/register">Регистрация</router-link>
       <router-link class="button" to="/login">Вход</router-link>
+    </div>
+    <div v-if="isAuthenticated" class="nav_elements">
+      <router-link class="button" to="/logout">Выйти</router-link>
     </div>
   </nav>
 </template>
