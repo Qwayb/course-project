@@ -3,8 +3,13 @@ import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import { useUserStore } from '@/stores/user';
 
-const userStore = useUserStore();
+const store = useUserStore();
 const router = useRouter();
+
+if (store.isAuthenticated) {
+  router.push('/');
+}
+
 const form = ref({
   email: '',
   password: ''
@@ -41,7 +46,7 @@ async function handleLogin() {
     console.log('Успешный вход:', data);
     // до сюдп
 
-    userStore.login(data.token, data.data);
+    store.login(data.token, data.data);
     router.push('/');
 
   } catch (err) {
@@ -54,7 +59,6 @@ async function handleLogin() {
 </script>
 
 <template>
-
   <div class="form">
     <h2>Вход</h2>
     <form class="input-block" @submit.prevent="handleLogin">

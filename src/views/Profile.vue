@@ -6,7 +6,7 @@ const store = useUserStore()
 <template>
 
   <h2>{{ store.currentUser.name }}</h2>
-  <button @click="info">инф</button>
+  <p>{{ store.currentUser.email }}</p>
   <router-link class="button" to="/logout">Выйти</router-link>
 
 </template>
@@ -14,5 +14,9 @@ const store = useUserStore()
 <style scoped>
 .button {
   color: #c30000;
+}
+
+p {
+  margin-bottom: 32px
 }
 </style>
