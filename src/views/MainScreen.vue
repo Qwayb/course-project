@@ -1,6 +1,6 @@
 <script setup>
-  import { ref } from 'vue';
-  const isAuthenticated = ref(!!localStorage.getItem('authToken'));
+  import { useUserStore } from '../stores/user';
+  const store = useUserStore();
 </script>
 
 <template>
@@ -8,7 +8,7 @@
 
   <h1>main screen</h1>
 
-  <p v-if="isAuthenticated">вы в аккаунте</p>
+  <p v-if="store.isAuthenticated">вы в аккаунте</p>
 
 </template>
 

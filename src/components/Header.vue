@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-const isAuthenticated = ref(!!localStorage.getItem('authToken'));
+import { useUserStore } from '@/stores/user'
+const store = useUserStore()
 </script>
 
 <template>
@@ -15,13 +15,13 @@ const isAuthenticated = ref(!!localStorage.getItem('authToken'));
 
     <!---->
 
-    <div v-if="!isAuthenticated" class="nav_elements">
+    <div v-if="!store.isAuthenticated" class="nav_elements">
       <router-link class="button" to="/register">Регистрация</router-link>
       <router-link class="button" to="/login">Вход</router-link>
     </div>
 
-    <div v-if="isAuthenticated" class="nav_elements">
-      <router-link class="button" to="/profile">Профиль</router-link>
+    <div v-if="store.isAuthenticated" class="nav_elements">
+      <router-link class="button" to="/profile">{{ store.currentUser.name }}</router-link>
     </div>
   </nav>
 </template>

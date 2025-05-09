@@ -1,7 +1,9 @@
 <script setup>
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore();
 const router = useRouter();
 const form = ref({
   email: '',
@@ -39,8 +41,7 @@ async function handleLogin() {
     console.log('Успешный вход:', data);
     // до сюдп
 
-    localStorage.setItem('authToken', data.token);
-    localStorage.setItem('user', JSON.stringify(data.data.name));
+    userStore.login(data.token, data.data);
     router.push('/');
 
   } catch (err) {

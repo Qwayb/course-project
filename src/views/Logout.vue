@@ -1,11 +1,12 @@
 <script setup>
 import {useRouter} from 'vue-router';
+import { useUserStore } from '@/stores/user'
 
+const store = useUserStore();
 const router = useRouter();
 
-function logout (){
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('user');
+function logout () {
+  store.logout()
   router.push('/');
 }
 
