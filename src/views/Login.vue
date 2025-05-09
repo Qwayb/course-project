@@ -1,7 +1,6 @@
 <script setup>
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
-import Header from "@/components/Header.vue";
 
 const router = useRouter();
 const form = ref({
@@ -27,18 +26,22 @@ async function handleLogin() {
       })
     });
 
+
     if (!response.ok) {
       const errData = await response.json();
       throw new Error(errData.message || 'Неверный email или пароль');
     }
 
     const data = await response.json();
+
+    // удалить
+    console.log(data.data.name);
     console.log('Успешный вход:', data);
+    // до сюдп
 
-    // Сохраняем токен (пример)
     localStorage.setItem('authToken', data.token);
-
-    router.push('/'); // Перенаправляем на главную
+    localStorage.setItem('user', JSON.stringify(data.data.name));
+    router.push('/');
 
   } catch (err) {
     error.value = err.message;
@@ -50,7 +53,6 @@ async function handleLogin() {
 </script>
 
 <template>
-  <Header/>
 
   <div class="form">
     <h2>Вход</h2>

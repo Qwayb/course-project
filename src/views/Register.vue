@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Header from "@/components/Header.vue";
 
 const router = useRouter();
 const form = ref({
@@ -48,7 +47,6 @@ async function handleRegister() {
 </script>
 
 <template>
-  <Header/>
 
   <div class="form">
     <h2>Регистрация</h2>

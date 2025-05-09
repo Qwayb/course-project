@@ -2,6 +2,7 @@ import MainScreen from "@/views/MainScreen.vue";
 import Login from "@/views/Login.vue";
 import Register from "@/views/Register.vue";
 import Logout from "@/views/Logout.vue";
+import Profile from "@/views/Profile.vue";
 
 const routes = [
     {
@@ -34,6 +35,14 @@ const routes = [
         component: Logout,
         meta: {
             title: 'Logout'
+        }
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
+        meta: {
+            title: 'Profile'
         }
     },
 ];

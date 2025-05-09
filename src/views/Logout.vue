@@ -1,25 +1,23 @@
 <script setup>
 import {useRouter} from 'vue-router';
-import Header from "@/components/Header.vue";
 
 const router = useRouter();
 
 function logout (){
   localStorage.removeItem('authToken');
+  localStorage.removeItem('user');
   router.push('/');
-  console.log('asd');
 }
 
 </script>
 
 <template>
-  <Header/>
   <div class="form">
     <h2>Выход</h2>
     <p>Вы уверены что хотите выйти?</p>
     <div class="form_buttons">
       <button @click="logout">Да</button>
-      <router-link class="button underline" to="mainScreen">Нет</router-link>
+      <router-link class="button underline" to="/">Нет</router-link>
     </div>
   </div>
 </template>
