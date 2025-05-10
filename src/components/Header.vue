@@ -8,7 +8,7 @@ const store = useUserStore()
     <div class="nav_elements">
       <router-link class="button" to="/">Главная</router-link>
 
-      <router-link class="button" to="/">Одежда</router-link>
+      <router-link class="button" to="/clothes">Одежда</router-link>
       <router-link class="button" to="/">Аутфиты</router-link>
       <router-link class="button" to="/">Желания</router-link>
     </div>
@@ -41,5 +41,11 @@ nav {
 .nav_elements {
   display: flex;
   gap: 10px;
+}
+
+.defShadow:hover {
+  box-shadow:
+      18px 18px 30px #D1D9E6,
+      -18px -18px 30px #FFFFFF;
 }
 </style>

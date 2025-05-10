@@ -79,6 +79,10 @@ button:hover {
             -18px -18px 30px #FFFFFF;
 }
 
+.defShadow:hover {
+    box-shadow: inset 4px 4px 11px rgba(172, 178, 189, 0.5);
+}
+
 .form {
     display: flex;
     flex-direction: column;
