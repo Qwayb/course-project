@@ -33,6 +33,8 @@ const selectedStylesText = computed(() =>
     formData.value.styles.length > 0 ? formData.value.styles.join(', ') : 'Выберите стиль(и)'
 );
 
+let dropDownOpened = ref(false);
+
 const toggleDropdown = (name) => {
   dropdowns.value = {
     seasons: false,
@@ -40,6 +42,8 @@ const toggleDropdown = (name) => {
     sizes: false,
     [name]: !dropdowns.value[name]
   };
+
+  dropDownOpened = ref(true);
 };
 
 const handleFileSelect = (event) => {
@@ -142,106 +146,163 @@ const submitForm = async () => {
 
 <template>
   <div class="add-clothing-form">
-    <h2>Добавить новую вещь</h2>
 
-    <!-- Поле для загрузки фото -->
-    <div class="upload-area">
-      <input type="file" id="file-upload" @change="handleFileSelect" accept="image/*" hidden />
+    <!--фото-->
+    <div class="upload-area defShadow">
+
+      <input type="file" id="file-upload" @change="handleFileSelect" accept="image/*" hidden=""/>
+
       <label for="file-upload" class="upload-label">
-        <span v-if="!previewImage">Перетащите или <u>Выбрать</u></span>
+
+        <div v-if="!previewImage" class="upload-label-noPreview">
+          <img class="upload-label-noPreview__img" src="../assets/images/upload.svg">
+          <span class="upload-label-noPreview__span">Пертащите или</span>
+          <span class="button">Выбрать</span>
+        </div>
+
         <img v-else :src="previewImage" class="preview-image" />
       </label>
     </div>
 
-    <!-- Название вещи -->
-    <div class="form-group">
-      <label>Название</label>
-      <input v-model="formData.name" type="text" placeholder="Введите название" />
-    </div>
+    <!--инпуты-->
+    <div class="input-area">
 
-    <!-- Сезоны -->
-    <div class="form-group">
-      <div class="select-header" @click="toggleDropdown('seasons')">
-        <label>Сезон</label>
-        <span>{{ selectedSeasonsText }}</span>
+      <!-- Название вещи -->
+      <div class="form-group">
+        <input class="input-area__name-input" v-model="formData.name" type="text" placeholder="Название" />
       </div>
-      <div v-if="dropdowns.seasons" class="dropdown-options">
-        <div v-for="season in seasons" :key="season" class="option">
-          <input
-              type="checkbox"
-              :id="'season-' + season"
-              :value="season"
-              v-model="formData.seasons"
-          />
-          <label :for="'season-' + season">{{ season }}</label>
+
+      <!-- Сезоны -->
+      <div class="form-group">
+
+        <div class="select-header" @click="toggleDropdown('seasons')">
+          <label>Сезон</label>
+          <div class="select-options">
+            <span>{{ selectedSeasonsText }}</span>
+            <img src="../assets/images/arrow.svg" alt="arrow">
+          </div>
+        </div>
+
+        <div v-if="dropdowns.seasons" class="dropdown-options">
+
+          <div v-for="season in seasons" :key="season" class="option">
+            <input
+                type="checkbox"
+                :id="'season-' + season"
+                :value="season"
+                v-model="formData.seasons"
+            />
+            <label :for="'season-' + season">{{ season }}</label>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Стиль -->
+      <div class="form-group">
+        <div class="select-header" @click="toggleDropdown('styles')">
+          <label>Стиль</label>
+          <span>{{ selectedStylesText }}</span>
+        </div>
+        <div v-if="dropdowns.styles" class="dropdown-options">
+          <div v-for="style in styles" :key="style" class="option">
+            <input
+                type="checkbox"
+                :id="'style-' + style"
+                :value="style"
+                v-model="formData.styles"
+            />
+            <label :for="'style-' + style">{{ style }}</label>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Стиль -->
-    <div class="form-group">
-      <div class="select-header" @click="toggleDropdown('styles')">
-        <label>Стиль</label>
-        <span>{{ selectedStylesText }}</span>
-      </div>
-      <div v-if="dropdowns.styles" class="dropdown-options">
-        <div v-for="style in styles" :key="style" class="option">
-          <input
-              type="checkbox"
-              :id="'style-' + style"
-              :value="style"
-              v-model="formData.styles"
-          />
-          <label :for="'style-' + style">{{ style }}</label>
+      <!-- Размер -->
+      <div class="form-group">
+        <div class="select-header" @click="toggleDropdown('sizes')">
+          <label>Размер</label>
+          <span>{{ formData.size || 'Выберите размер' }}</span>
+        </div>
+        <div v-if="dropdowns.sizes" class="dropdown-options">
+          <div v-for="size in sizes" :key="size" class="option">
+            <input
+                type="radio"
+                :id="'size-' + size"
+                :value="size"
+                v-model="formData.size"
+                name="size"
+            />
+            <label :for="'size-' + size">{{ size }}</label>
+          </div>
         </div>
       </div>
+
+      <!-- Кнопка добавления -->
+      <button @click="submitForm" :disabled="isSubmitting" class="submit-btn">
+        {{ isSubmitting ? 'Добавляем...' : 'Добавить' }}
+      </button>
     </div>
 
-    <!-- Размер -->
-    <div class="form-group">
-      <div class="select-header" @click="toggleDropdown('sizes')">
-        <label>Размер</label>
-        <span>{{ formData.size || 'Выберите размер' }}</span>
-      </div>
-      <div v-if="dropdowns.sizes" class="dropdown-options">
-        <div v-for="size in sizes" :key="size" class="option">
-          <input
-              type="radio"
-              :id="'size-' + size"
-              :value="size"
-              v-model="formData.size"
-              name="size"
-          />
-          <label :for="'size-' + size">{{ size }}</label>
-        </div>
-      </div>
-    </div>
 
-    <!-- Кнопка добавления -->
-    <button @click="submitForm" :disabled="isSubmitting" class="submit-btn">
-      {{ isSubmitting ? 'Добавляем...' : 'Добавить' }}
-    </button>
   </div>
 </template>
 
 <style scoped>
+.select-options {
+  display: flex;
+}
+
+.input-area__name-input {
+  background: none;
+  box-shadow: none;
+  margin: 0;
+}
+
 .add-clothing-form {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: space-between;
+}
+
+.input-area{
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-label-noPreview__img {
+  width: 144px;
+}
+
+.upload-label-noPreview__span{
+  font-weight: bold;
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+.upload-label-noPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 47px;
+}
+
+.add-clothing-form {
+
 }
 
 .upload-area {
-  border: 2px dashed #ccc;
-  padding: 20px;
-  text-align: center;
-  margin-bottom: 20px;
+  border: 2px dashed #000;
   cursor: pointer;
+  max-height: 656px;
+}
+
+.defShadow:hover {
+  box-shadow:
+      18px 18px 30px #D1D9E6,
+      -18px -18px 30px #FFFFFF;
 }
 
 .upload-label {
-  display: block;
   cursor: pointer;
 }
 
@@ -252,15 +313,11 @@ const submitForm = async () => {
 }
 
 .form-group {
-  margin-bottom: 15px;
 }
 
 .select-header {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
   cursor: pointer;
 }
 

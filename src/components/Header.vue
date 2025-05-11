@@ -5,7 +5,16 @@ const store = useUserStore()
 
 <template>
   <nav class="defShadow">
-    <div class="nav_elements">
+
+    <div v-if="!store.isAuthenticated" class="nav_elements">
+      <router-link class="button" to="/">Главная</router-link>
+
+      <router-link class="button" to="/login">Одежда</router-link>
+      <router-link class="button" to="/login">Аутфиты</router-link>
+      <router-link class="button" to="/login">Желания</router-link>
+    </div>
+
+    <div v-if="store.isAuthenticated" class="nav_elements">
       <router-link class="button" to="/">Главная</router-link>
 
       <router-link class="button" to="/clothes">Одежда</router-link>
