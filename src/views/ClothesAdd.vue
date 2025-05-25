@@ -33,17 +33,15 @@ const selectedStylesText = computed(() =>
     formData.value.styles.length > 0 ? formData.value.styles.join(', ') : 'Выберите стиль(и)'
 );
 
-let dropDownOpened = ref(false);
 
 const toggleDropdown = (name) => {
+  const dropped = true;
   dropdowns.value = {
     seasons: false,
     styles: false,
     sizes: false,
     [name]: !dropdowns.value[name]
   };
-
-  dropDownOpened = ref(true);
 };
 
 const handleFileSelect = (event) => {
@@ -213,7 +211,7 @@ const submitForm = async () => {
                 :value="style"
                 v-model="formData.styles"
             />
-            <label :for="'style-' + style">{{ style }}</label>
+            <label :for="'style-' + style" class="options">{{ style }}</label>
           </div>
         </div>
       </div>
@@ -239,7 +237,7 @@ const submitForm = async () => {
       </div>
 
       <!-- Кнопка добавления -->
-      <button @click="submitForm" :disabled="isSubmitting" class="submit-btn">
+      <button @click="submitForm" :disabled="isSubmitting" class="button button-submit">
         {{ isSubmitting ? 'Добавляем...' : 'Добавить' }}
       </button>
     </div>
@@ -249,6 +247,21 @@ const submitForm = async () => {
 </template>
 
 <style scoped>
+.options {
+  background-color: #ECF0F3;
+  border-radius: 15px;
+  box-shadow:
+      18px 18px 30px #D1D9E6,
+      -18px -18px 30px #FFFFFF;
+  max-width: fit-content;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.options:hover {
+  border: solid 1px;
+}
+
 .select-options {
   display: flex;
 }
@@ -267,6 +280,7 @@ const submitForm = async () => {
 .input-area{
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .upload-label-noPreview__img {
@@ -287,13 +301,15 @@ const submitForm = async () => {
 }
 
 .add-clothing-form {
-
+  gap: 10vh;
 }
 
 .upload-area {
+  padding: 15vh 0;
   border: 2px dashed #000;
   cursor: pointer;
   max-height: 656px;
+  width: 100%;
 }
 
 .defShadow:hover {
@@ -313,18 +329,20 @@ const submitForm = async () => {
 }
 
 .form-group {
+  margin-bottom: 2vh;
 }
 
 .select-header {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
+  margin-bottom: 2vh;
+
 }
 
 .dropdown-options {
-  border: 1px solid #eee;
-  padding: 10px;
-  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .option {
@@ -335,6 +353,12 @@ input[type="text"] {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+}
+
+.button-submit {
+  font-weight: bold;
+  font-size: 2vh;
+  padding: 2vh 4vh;
 }
 
 .submit-btn {

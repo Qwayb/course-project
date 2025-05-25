@@ -23,7 +23,7 @@ h2 {
     text-decoration: underline;
 }
 
-input {
+.input {
     background-color: #ECF0F3;
     outline: none;
     /*border: 1px solid #000000;*/
@@ -43,12 +43,12 @@ button {
     background-color: #ECF0F3;
     border-radius: 15px;
     box-shadow:
-            18px 18px 30px #D1D9E6,
-            -18px -18px 30px #FFFFFF;
+            18px 18px 30px rgba(209, 217, 230, 1),
+            -18px -18px 30px rgba(255, 255, 255, 1);
     max-width: fit-content;
     padding: 7px 10px;
 
-    transition: box-shadow 0.9s ease-in-out !important;
+    transition: all 0.9s ease-in-out !important;
 }
 
 .button {
@@ -60,7 +60,7 @@ button {
     max-width: fit-content;
     padding: 7px 10px;
 
-    transition: box-shadow 0.9s ease-in-out !important;
+    transition: all 0.9s ease-in-out !important;
 }
 
 button:hover {

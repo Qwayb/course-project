@@ -57,9 +57,9 @@ async function handleRegister() {
   <div class="form">
     <h2>Регистрация</h2>
     <form class="input-block" @submit.prevent="handleRegister">
-      <input v-model="form.name" type="text" placeholder="Имя" required>
-      <input v-model="form.email" type="email" placeholder="Email" required>
-      <input v-model="form.password" type="password" placeholder="Пароль" required>
+      <input v-model="form.name" type="text" placeholder="Имя" required class="input">
+      <input v-model="form.email" type="email" placeholder="Email" required class="input">
+      <input v-model="form.password" type="password" placeholder="Пароль" required class="input">
       <button type="submit" :disabled="isLoading">
         {{ isLoading ? 'Регистрация...' : 'Зарегистрироваться' }}
       </button>
