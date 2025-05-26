@@ -35,7 +35,6 @@ const selectedStylesText = computed(() =>
 
 
 const toggleDropdown = (name) => {
-  const dropped = true;
   dropdowns.value = {
     seasons: false,
     styles: false,
@@ -199,10 +198,12 @@ const submitForm = async () => {
 
       <!-- Стиль -->
       <div class="form-group">
+
         <div class="select-header" @click="toggleDropdown('styles')">
           <label>Стиль</label>
-          <span>{{ selectedStylesText }}</span>
+          <span>{{ selectedStylesText }} <img src="../assets/images/arrow.svg" alt="arrow"></span>
         </div>
+
         <div v-if="dropdowns.styles" class="dropdown-options">
           <div v-for="style in styles" :key="style" class="option">
             <input
@@ -214,6 +215,7 @@ const submitForm = async () => {
             <label :for="'style-' + style" class="options">{{ style }}</label>
           </div>
         </div>
+
       </div>
 
       <!-- Размер -->
@@ -262,6 +264,10 @@ const submitForm = async () => {
   border: solid 1px;
 }
 
+.select-header > span {
+  color: #328BFF;
+}
+
 .select-options {
   display: flex;
 }
@@ -281,6 +287,7 @@ const submitForm = async () => {
   display: flex;
   flex-direction: column;
   width: 100%;
+  font-size: 2vh;
 }
 
 .upload-label-noPreview__img {
