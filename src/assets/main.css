@@ -39,17 +39,17 @@ input:focus {
     box-shadow: inset 4px 4px 11px rgba(172, 178, 189, 0.5);
 }
 
-button {
-    background-color: #ECF0F3;
-    border-radius: 15px;
-    box-shadow:
-            18px 18px 30px rgba(209, 217, 230, 1),
-            -18px -18px 30px rgba(255, 255, 255, 1);
-    max-width: fit-content;
-    padding: 7px 10px;
+/*button {*/
+/*    background-color: #ECF0F3;*/
+/*    border-radius: 15px;*/
+/*    box-shadow:*/
+/*            18px 18px 30px rgba(209, 217, 230, 1),*/
+/*            -18px -18px 30px rgba(255, 255, 255, 1);*/
+/*    max-width: fit-content;*/
+/*    padding: 7px 10px;*/
 
-    transition: all 0.9s ease-in-out !important;
-}
+/*    transition: all 0.9s ease-in-out !important;*/
+/*}*/
 
 .button {
     background-color: #ECF0F3;

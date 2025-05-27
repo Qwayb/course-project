@@ -34,6 +34,56 @@ const fetchClothes = async () => {
   }
 };
 
+// Функция для извлечения ID изображения из URL
+const extractImageIdFromUrl = (imageUrl) => {
+  try {
+    // Получаем все загруженные изображения для поиска соответствия
+    return fetch('https://87bb0d4c94472c27.mokky.dev/uploads', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(uploads => {
+          // Ищем изображение с соответствующим URL
+          const image = uploads.find(upload => upload.url === imageUrl);
+          return image ? image.id : null;
+        });
+  } catch (err) {
+    console.error('Ошибка при поиске ID изображения:', err);
+    return null;
+  }
+};
+
+// Функция для удаления изображения
+const deleteImage = async (imageId) => {
+  if (!imageId) return;
+
+  try {
+    const response = await fetch(`https://87bb0d4c94472c27.mokky.dev/uploads/${imageId}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log('Изображение удалено:', imageId);
+  } catch (err) {
+    console.error('Ошибка при удалении изображения:', err);
+    // Не прерываем выполнение, так как основной элемент уже удален
+  }
+};
+
 // Функция для удаления вещи
 const deleteClothingItem = async (id) => {
   if (!confirm('Вы уверены, что хотите удалить эту вещь?')) {
@@ -41,6 +91,16 @@ const deleteClothingItem = async (id) => {
   }
 
   try {
+    // Находим элемент одежды для получения URL изображения
+    const clothingItem = clothes.value.find(item => item.id === id);
+    if (!clothingItem) {
+      throw new Error('Элемент одежды не найден');
+    }
+
+    // Получаем ID изображения
+    const imageId = await extractImageIdFromUrl(clothingItem.imageUrl);
+
+    // Удаляем элемент одежды
     const response = await fetch(`https://87bb0d4c94472c27.mokky.dev/clothes/${id}`, {
       method: 'DELETE',
       headers: {
@@ -55,6 +115,11 @@ const deleteClothingItem = async (id) => {
     // Удаляем из локального массива
     clothes.value = clothes.value.filter(item => item.id !== id);
     console.log('Вещь удалена:', id);
+
+    // Удаляем связанное изображение
+    if (imageId) {
+      await deleteImage(imageId);
+    }
 
   } catch (err) {
     console.error('Ошибка при удалении:', err);
@@ -154,13 +219,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
-    <!-- Сообщение если нет одежды -->
-    <div v-if="!isLoading && !error && clothes.length === 0" class="empty-state">
-      <p>У вас пока нет добавленной одежды</p>
-      <router-link to="/clothesAdd" class="button">Добавить первую вещь</router-link>
-    </div>
-
   </div>
 </template>
 
