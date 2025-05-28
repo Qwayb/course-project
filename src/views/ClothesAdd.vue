@@ -312,11 +312,13 @@ const submitForm = async () => {
 }
 
 .upload-area {
-  padding: 15vh 0;
   border: 2px dashed #000;
   cursor: pointer;
   max-height: 656px;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .defShadow:hover {
@@ -330,9 +332,8 @@ const submitForm = async () => {
 }
 
 .preview-image {
-  max-width: 100%;
-  max-height: 200px;
-  margin-top: 10px;
+  width: 100%;
+  border-radius: 13px;
 }
 
 .form-group {
