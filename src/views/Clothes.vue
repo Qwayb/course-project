@@ -150,8 +150,8 @@ onMounted(() => {
 
     <!-- Сетка с одеждой -->
     <div v-if="!isLoading && !error" class="clothes-grid">
-      <router-link to="/clothesAdd" class="add-button-container">
-        <img src="../assets/images/plus.svg" alt="add" class="Card__add defShadow">
+      <router-link to="/clothesAdd" class="add-button-container clothing-card defShadow">
+        <img src="../assets/images/plus.svg" alt="add" class="">
       </router-link>
 
       <!-- Карточка одежды -->
@@ -228,8 +228,9 @@ onMounted(() => {
 }
 
 .add-button-container {
-  display: inline-block;
-  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .Card__add {
@@ -276,13 +277,13 @@ onMounted(() => {
   margin-bottom: 1rem;
   border-radius: 10px;
   overflow: hidden;
-  background-color: #f5f5f5;
+  //background-color: #f5f5f5;
 }
 
 .card-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px;
 }
 
