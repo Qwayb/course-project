@@ -1,5 +1,17 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+
+const router = useRouter();
+const store = useUserStore();
+
+// Redirect to login if not authenticated
+onMounted(() => {
+  if (!store.isAuthenticated) {
+    router.push('/login');
+  }
+});
 
 const formData = ref({
   name: '',
@@ -126,6 +138,13 @@ const useOriginalImage = () => {
 };
 
 const submitForm = async () => {
+  // Check if user is still authenticated
+  if (!store.isAuthenticated || !store.currentUser) {
+    alert('Вы должны быть авторизованы для добавления одежды');
+    router.push('/login');
+    return;
+  }
+
   if (!formData.value.name) {
     alert('Пожалуйста, укажите название вещи');
     return;
@@ -163,13 +182,14 @@ const submitForm = async () => {
       throw new Error('Сервер не вернул URL изображения');
     }
 
-    // 2. Сохраняем данные о вещи
+    // 2. Сохраняем данные о вещи с привязкой к пользователю
     const clothingData = {
       name: formData.value.name,
       seasons: formData.value.seasons,
       styles: formData.value.styles,
       size: formData.value.size,
-      imageUrl: imageData.url
+      imageUrl: imageData.url,
+      users_id: store.currentUser.id // Добавляем ID текущего пользователя
     };
 
     const clothingResponse = await fetch('https://87bb0d4c94472c27.mokky.dev/clothes', {
@@ -201,6 +221,9 @@ const submitForm = async () => {
     previewImage.value = null;
     processedImage.value = null;
 
+    // Перенаправляем на страницу с одеждой
+    router.push('/clothes');
+
   } catch (error) {
     console.error('Ошибка:', error);
     alert(`Ошибка: ${error.message}`);
@@ -211,7 +234,13 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div class="add-clothing-form">
+  <div v-if="!store.isAuthenticated" class="not-authenticated">
+    <h2>Доступ запрещен</h2>
+    <p>Вы должны быть авторизованы для добавления одежды</p>
+    <router-link to="/login" class="button">Войти</router-link>
+  </div>
+
+  <div v-else class="add-clothing-form">
 
     <!--фото-->
     <div class="upload-area defShadow">
@@ -226,7 +255,7 @@ const submitForm = async () => {
         </div>
 
         <!-- Show processed image if available, otherwise show original -->
-        <img v-else :src="processedImage || previewImage" class="preview-image" />
+        <img v-else :src="processedImage || previewImage" class="preview-image"/>
       </label>
 
       <!-- Background removal controls -->
@@ -259,7 +288,7 @@ const submitForm = async () => {
 
       <!-- Название вещи -->
       <div class="form-group">
-        <input class="input-area__name-input" v-model="formData.name" type="text" placeholder="Название" />
+        <input class="input-area__name-input" v-model="formData.name" type="text" placeholder="Название"/>
       </div>
 
       <!-- Сезоны -->
@@ -341,12 +370,27 @@ const submitForm = async () => {
 </template>
 
 <style scoped>
+.not-authenticated {
+  text-align: center;
+  padding: 2rem;
+}
+
+.not-authenticated h2 {
+  color: #c30000;
+  margin-bottom: 1rem;
+}
+
+.not-authenticated p {
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
 .options {
   background-color: #ECF0F3;
   border-radius: 15px;
-  box-shadow:
-      18px 18px 30px #D1D9E6,
-      -18px -18px 30px #FFFFFF;
+  box-shadow: 18px 18px 30px #D1D9E6,
+  -18px -18px 30px #FFFFFF;
   max-width: fit-content;
   padding: 7px 10px;
   cursor: pointer;
@@ -375,7 +419,7 @@ const submitForm = async () => {
   justify-content: space-between;
 }
 
-.input-area{
+.input-area {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -386,7 +430,7 @@ const submitForm = async () => {
   width: 144px;
 }
 
-.upload-label-noPreview__span{
+.upload-label-noPreview__span {
   font-weight: bold;
   font-size: 16px;
   opacity: 0.5;
@@ -416,9 +460,8 @@ const submitForm = async () => {
 }
 
 .defShadow:hover {
-  box-shadow:
-      18px 18px 30px #D1D9E6,
-      -18px -18px 30px #FFFFFF;
+  box-shadow: 18px 18px 30px #D1D9E6,
+  -18px -18px 30px #FFFFFF;
 }
 
 .upload-label {

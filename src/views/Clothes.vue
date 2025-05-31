@@ -1,5 +1,20 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+
+const router = useRouter();
+const store = useUserStore();
+
+// Redirect to login if not authenticated
+onMounted(() => {
+  if (!store.isAuthenticated) {
+    router.push('/login');
+    return;
+  }
+  // Fetch clothes only if authenticated
+  fetchClothes();
+});
 
 const clothes = ref([]);
 const isLoading = ref(false);
@@ -109,13 +124,20 @@ const getSortIcon = (field) => {
   return sortOrder.value === 'asc' ? '↑' : '↓';
 };
 
-// Функция для загрузки одежды
+// Функция для загрузки одежды только для текущего пользователя
 const fetchClothes = async () => {
+  if (!store.isAuthenticated || !store.currentUser) {
+    console.error('Пользователь не аутентифицирован');
+    router.push('/login');
+    return;
+  }
+
   isLoading.value = true;
   error.value = '';
 
   try {
-    const response = await fetch('https://87bb0d4c94472c27.mokky.dev/clothes', {
+    // Запрашиваем только одежду текущего пользователя
+    const response = await fetch(`https://87bb0d4c94472c27.mokky.dev/clothes?users_id=${store.currentUser.id}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -127,8 +149,12 @@ const fetchClothes = async () => {
     }
 
     const data = await response.json();
-    clothes.value = data;
-    console.log('Загружено вещей:', data.length);
+
+    // Дополнительная проверка на клиенте для безопасности
+    const userClothes = data.filter(item => item.users_id === store.currentUser.id);
+    clothes.value = userClothes;
+
+    console.log('Загружено вещей для пользователя:', userClothes.length);
 
   } catch (err) {
     console.error('Ошибка при загрузке одежды:', err);
@@ -185,18 +211,30 @@ const deleteImage = async (imageId) => {
   }
 };
 
-// Функция для удаления вещи
+// Функция для удаления вещи с проверкой принадлежности пользователю
 const deleteClothingItem = async (id) => {
+  if (!store.isAuthenticated || !store.currentUser) {
+    alert('Вы должны быть авторизованы для удаления одежды');
+    return;
+  }
+
+  const clothingItem = clothes.value.find(item => item.id === id);
+  if (!clothingItem) {
+    alert('Элемент одежды не найден');
+    return;
+  }
+
+  // Проверяем, принадлежит ли вещь текущему пользователю
+  if (clothingItem.users_id !== store.currentUser.id) {
+    alert('Вы можете удалять только свою одежду');
+    return;
+  }
+
   if (!confirm('Вы уверены, что хотите удалить эту вещь?')) {
     return;
   }
 
   try {
-    const clothingItem = clothes.value.find(item => item.id === id);
-    if (!clothingItem) {
-      throw new Error('Элемент одежды не найден');
-    }
-
     const imageId = await extractImageIdFromUrl(clothingItem.imageUrl);
 
     const response = await fetch(`https://87bb0d4c94472c27.mokky.dev/clothes/${id}`, {
@@ -222,18 +260,24 @@ const deleteClothingItem = async (id) => {
     alert('Не удалось удалить вещь');
   }
 };
-
-// Загружаем данные при монтировании компонента
-onMounted(() => {
-  fetchClothes();
-});
 </script>
 
 <template>
-  <div class="clothes-container">
+  <div v-if="!store.isAuthenticated" class="not-authenticated">
+    <h2>Доступ запрещен</h2>
+    <p>Вы должны быть авторизованы для просмотра одежды</p>
+    <router-link to="/login" class="button">Войти</router-link>
+  </div>
+
+  <div v-else class="clothes-container">
 
     <!-- NEW: Sorting and Filtering Controls -->
     <div class="controls-section">
+
+      <!-- User Info -->
+<!--      <div class="user-info">-->
+<!--        <h2>Гардероб пользователя: {{ store.currentUser.name }}</h2>-->
+<!--      </div>-->
 
       <!-- Sorting Controls -->
       <div class="sort-controls">
@@ -341,8 +385,15 @@ onMounted(() => {
       <button @click="fetchClothes" class="button">Попробовать снова</button>
     </div>
 
+    <!-- Empty State - no clothes at all -->
+    <div v-if="!isLoading && !error && clothes.length === 0" class="empty-state">
+      <h3>У вас пока нет одежды в гардеробе</h3>
+      <p>Добавьте первую вещь, чтобы начать создавать свой гардероб</p>
+      <router-link to="/clothesAdd" class="button">Добавить одежду</router-link>
+    </div>
+
     <!-- Сетка с одеждой -->
-    <div v-if="!isLoading && !error" class="clothes-grid">
+    <div v-if="!isLoading && !error && clothes.length > 0" class="clothes-grid">
       <router-link to="/clothesAdd" class="add-button-container clothing-card defShadow">
         <img src="../assets/images/plus.svg" alt="add" class="">
       </router-link>
@@ -413,7 +464,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Empty State -->
+    <!-- Empty State - filtered results -->
     <div v-if="!isLoading && !error && sortedAndFilteredClothes.length === 0 && clothes.length > 0" class="empty-filtered">
       <p>Нет вещей, соответствующих выбранным фильтрам</p>
       <button @click="clearFilters" class="button">Сбросить фильтры</button>
@@ -422,9 +473,38 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.not-authenticated {
+  text-align: center;
+  padding: 2rem;
+}
+
+.not-authenticated h2 {
+  color: #c30000;
+  margin-bottom: 1rem;
+}
+
+.not-authenticated p {
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
 .clothes-container {
   width: 100%;
   margin-bottom: 10vh;
+}
+
+/* User Info Styles */
+.user-info {
+  margin-bottom: 2vh;
+  text-align: center;
+}
+
+.user-info h2 {
+  color: #333;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 0;
 }
 
 /* NEW: Controls Section Styles */
@@ -535,7 +615,7 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
 }
 
-.empty-filtered {
+.empty-filtered, .empty-state {
   text-align: center;
   padding: 40px;
   background: #ECF0F3;
@@ -545,10 +625,16 @@ onMounted(() => {
       -18px -18px 30px #FFFFFF;
 }
 
-.empty-filtered p {
+.empty-filtered p, .empty-state p {
   font-size: 18px;
   color: #666;
   margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 15px;
 }
 
 /* Existing styles */
@@ -567,7 +653,7 @@ onMounted(() => {
   transform: scale(1.05);
 }
 
-.loading, .error-message, .empty-state {
+.loading, .error-message {
   text-align: center;
   padding: 2rem;
   font-size: 1.2rem;
@@ -602,7 +688,6 @@ onMounted(() => {
   margin-bottom: 1rem;
   border-radius: 10px;
   overflow: hidden;
-  //background-color: #f5f5f5;
 }
 
 .card-image {
