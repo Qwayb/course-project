@@ -1,9 +1,113 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 const clothes = ref([]);
 const isLoading = ref(false);
 const error = ref('');
+
+// NEW: Sorting state
+const sortBy = ref('name'); // Default sort by name
+const sortOrder = ref('asc'); // 'asc' or 'desc'
+const filterBy = ref({
+  size: '',
+  season: '',
+  style: ''
+});
+
+// NEW: Available options for filtering
+const availableSizes = ['XS', 'S', 'M', 'L', 'XL'];
+const availableSeasons = ['Весна', 'Лето', 'Осень', 'Зима'];
+const availableStyles = ['Повседневный', 'Рабочий', 'Классический'];
+
+// NEW: Computed property for sorted and filtered clothes
+const sortedAndFilteredClothes = computed(() => {
+  let result = [...clothes.value];
+
+  // Apply filters
+  if (filterBy.value.size) {
+    result = result.filter(item => item.size === filterBy.value.size);
+  }
+  if (filterBy.value.season) {
+    result = result.filter(item =>
+        item.seasons && item.seasons.includes(filterBy.value.season)
+    );
+  }
+  if (filterBy.value.style) {
+    result = result.filter(item =>
+        item.styles && item.styles.includes(filterBy.value.style)
+    );
+  }
+
+  // Apply sorting
+  result.sort((a, b) => {
+    let aValue, bValue;
+
+    switch (sortBy.value) {
+      case 'name':
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case 'size':
+        // Sort by size order: XS, S, M, L, XL
+        const sizeOrder = { 'XS': 1, 'S': 2, 'M': 3, 'L': 4, 'XL': 5 };
+        aValue = sizeOrder[a.size] || 999;
+        bValue = sizeOrder[b.size] || 999;
+        break;
+      case 'seasons':
+        // Sort by first season alphabetically
+        aValue = (a.seasons && a.seasons.length > 0) ? a.seasons[0] : 'zzz';
+        bValue = (b.seasons && b.seasons.length > 0) ? b.seasons[0] : 'zzz';
+        break;
+      case 'styles':
+        // Sort by first style alphabetically
+        aValue = (a.styles && a.styles.length > 0) ? a.styles[0] : 'zzz';
+        bValue = (b.styles && b.styles.length > 0) ? b.styles[0] : 'zzz';
+        break;
+      case 'dateAdded':
+        // Sort by ID (assuming higher ID = more recent)
+        aValue = a.id;
+        bValue = b.id;
+        break;
+      default:
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+    }
+
+    if (aValue < bValue) {
+      return sortOrder.value === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortOrder.value === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+
+  return result;
+});
+
+// NEW: Functions for sorting and filtering
+const setSortBy = (field) => {
+  if (sortBy.value === field) {
+    // Toggle sort order if same field
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortBy.value = field;
+    sortOrder.value = 'asc';
+  }
+};
+
+const clearFilters = () => {
+  filterBy.value = {
+    size: '',
+    season: '',
+    style: ''
+  };
+};
+
+const getSortIcon = (field) => {
+  if (sortBy.value !== field) return '↿️⇂';
+  return sortOrder.value === 'asc' ? '↑' : '↓';
+};
 
 // Функция для загрузки одежды
 const fetchClothes = async () => {
@@ -37,7 +141,6 @@ const fetchClothes = async () => {
 // Функция для извлечения ID изображения из URL
 const extractImageIdFromUrl = (imageUrl) => {
   try {
-    // Получаем все загруженные изображения для поиска соответствия
     return fetch('https://87bb0d4c94472c27.mokky.dev/uploads', {
       method: 'GET',
       headers: {
@@ -51,7 +154,6 @@ const extractImageIdFromUrl = (imageUrl) => {
           return response.json();
         })
         .then(uploads => {
-          // Ищем изображение с соответствующим URL
           const image = uploads.find(upload => upload.url === imageUrl);
           return image ? image.id : null;
         });
@@ -80,7 +182,6 @@ const deleteImage = async (imageId) => {
     console.log('Изображение удалено:', imageId);
   } catch (err) {
     console.error('Ошибка при удалении изображения:', err);
-    // Не прерываем выполнение, так как основной элемент уже удален
   }
 };
 
@@ -91,16 +192,13 @@ const deleteClothingItem = async (id) => {
   }
 
   try {
-    // Находим элемент одежды для получения URL изображения
     const clothingItem = clothes.value.find(item => item.id === id);
     if (!clothingItem) {
       throw new Error('Элемент одежды не найден');
     }
 
-    // Получаем ID изображения
     const imageId = await extractImageIdFromUrl(clothingItem.imageUrl);
 
-    // Удаляем элемент одежды
     const response = await fetch(`https://87bb0d4c94472c27.mokky.dev/clothes/${id}`, {
       method: 'DELETE',
       headers: {
@@ -112,11 +210,9 @@ const deleteClothingItem = async (id) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Удаляем из локального массива
     clothes.value = clothes.value.filter(item => item.id !== id);
     console.log('Вещь удалена:', id);
 
-    // Удаляем связанное изображение
     if (imageId) {
       await deleteImage(imageId);
     }
@@ -136,6 +232,103 @@ onMounted(() => {
 <template>
   <div class="clothes-container">
 
+    <!-- NEW: Sorting and Filtering Controls -->
+    <div class="controls-section">
+
+      <!-- Sorting Controls -->
+      <div class="sort-controls">
+        <h3>Сортировка</h3>
+        <div class="sort-buttons">
+          <button
+              @click="setSortBy('name')"
+              :class="{ active: sortBy === 'name' }"
+              class="sort-btn "
+          >
+            По названию {{ getSortIcon('name') }}
+          </button>
+          <button
+              @click="setSortBy('size')"
+              :class="{ active: sortBy === 'size' }"
+              class="sort-btn"
+          >
+            По размеру {{ getSortIcon('size') }}
+          </button>
+          <button
+              @click="setSortBy('seasons')"
+              :class="{ active: sortBy === 'seasons' }"
+              class="sort-btn"
+          >
+            По сезону {{ getSortIcon('seasons') }}
+          </button>
+          <button
+              @click="setSortBy('styles')"
+              :class="{ active: sortBy === 'styles' }"
+              class="sort-btn"
+          >
+            По стилю {{ getSortIcon('styles') }}
+          </button>
+          <button
+              @click="setSortBy('dateAdded')"
+              :class="{ active: sortBy === 'dateAdded' }"
+              class="sort-btn"
+          >
+            По дате {{ getSortIcon('dateAdded') }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="filter-controls">
+        <h3>Фильтры</h3>
+        <div class="filter-row">
+
+          <!-- Size Filter -->
+          <div class="filter-group">
+            <label>Размер:</label>
+            <select v-model="filterBy.size" class="filter-select">
+              <option value="">Все размеры</option>
+              <option v-for="size in availableSizes" :key="size" :value="size">
+                {{ size }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Season Filter -->
+          <div class="filter-group">
+            <label>Сезон:</label>
+            <select v-model="filterBy.season" class="filter-select">
+              <option value="">Все сезоны</option>
+              <option v-for="season in availableSeasons" :key="season" :value="season">
+                {{ season }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Style Filter -->
+          <div class="filter-group">
+            <label>Стиль:</label>
+            <select v-model="filterBy.style" class="filter-select">
+              <option value="">Все стили</option>
+              <option v-for="style in availableStyles" :key="style" :value="style">
+                {{ style }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Clear Filters Button -->
+          <button @click="clearFilters" class="button clear-filters-btn">
+            Очистить фильтры
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+<!--      <div class="results-info">-->
+<!--        <span class="results-count">-->
+<!--          Показано: {{ sortedAndFilteredClothes.length }} из {{ clothes.length }} вещей-->
+<!--        </span>-->
+<!--      </div>-->
+    </div>
 
     <!-- Индикатор загрузки -->
     <div v-if="isLoading" class="loading">
@@ -156,7 +349,7 @@ onMounted(() => {
 
       <!-- Карточка одежды -->
       <div
-          v-for="item in clothes"
+          v-for="item in sortedAndFilteredClothes"
           :key="item.id"
           class="clothing-card defShadow"
       >
@@ -219,14 +412,146 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- Empty State -->
+    <div v-if="!isLoading && !error && sortedAndFilteredClothes.length === 0 && clothes.length > 0" class="empty-filtered">
+      <p>Нет вещей, соответствующих выбранным фильтрам</p>
+      <button @click="clearFilters" class="button">Сбросить фильтры</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .clothes-container {
   width: 100%;
+  margin-bottom: 10vh;
 }
 
+/* NEW: Controls Section Styles */
+.controls-section {
+  background: #ECF0F3;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow:
+      18px 18px 30px #D1D9E6,
+      -18px -18px 30px #FFFFFF;
+}
+
+.sort-controls, .filter-controls {
+  margin-bottom: 4vh;
+}
+
+.sort-controls h3, .filter-controls h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sort-btn {
+  background: #ECF0F3;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow:
+      8px 8px 15px #D1D9E6,
+      -8px -8px 15px #FFFFFF;
+}
+
+.sort-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+      12px 12px 20px #D1D9E6,
+      -12px -12px 20px #FFFFFF;
+}
+
+.sort-btn.active {
+  border-color: #303030;
+  box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1);
+}
+
+.filter-row {
+  display: flex;
+  gap: 20px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
+}
+
+.filter-select {
+  background: #ECF0F3;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 15px;
+  min-width: 140px;
+  box-shadow: inset 4px 4px 8px #D1D9E6;
+  transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  box-shadow: inset 6px 6px 12px #D1D9E6;
+}
+
+.clear-filters-btn {
+  border-radius: 12px;
+  padding: 10px 20px;
+}
+
+.results-info {
+  border-top: 1px solid #D1D9E6;
+  padding-top: 15px;
+  text-align: center;
+}
+
+.results-count {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+}
+
+.empty-filtered {
+  text-align: center;
+  padding: 40px;
+  background: #ECF0F3;
+  border-radius: 20px;
+  box-shadow:
+      18px 18px 30px #D1D9E6,
+      -18px -18px 30px #FFFFFF;
+}
+
+.empty-filtered p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Existing styles */
 .add-button-container {
   display: flex;
   align-items: center;
@@ -369,6 +694,27 @@ onMounted(() => {
 
 /* Адаптивность */
 @media (max-width: 768px) {
+  .controls-section {
+    padding: 20px;
+  }
+
+  .sort-buttons {
+    justify-content: center;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-select {
+    min-width: auto;
+  }
+
   .clothes-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
@@ -394,6 +740,14 @@ onMounted(() => {
 
   .Card__add {
     padding: 60px 40px;
+  }
+
+  .sort-buttons {
+    flex-direction: column;
+  }
+
+  .sort-btn {
+    width: 100%;
   }
 }
 </style>

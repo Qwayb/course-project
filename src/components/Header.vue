@@ -44,7 +44,7 @@ nav {
   gap: 10px;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 79px;
+  margin-bottom: 6vh;
 }
 
 .nav_elements {
