@@ -74,7 +74,7 @@ const handleFileSelect = (event) => {
   }
 };
 
-// NEW FUNCTION: Remove background from image
+// удаление фона
 const removeBackground = async () => {
   if (!formData.value.imageFile) {
     alert('Сначала выберите изображение');
@@ -84,12 +84,12 @@ const removeBackground = async () => {
   isRemovingBackground.value = true;
 
   try {
-    // Create FormData for the API request
+    // форма для api
     const bgRemovalFormData = new FormData();
     bgRemovalFormData.append('image_file', formData.value.imageFile);
     bgRemovalFormData.append('size', 'auto'); // You can change this to 'preview', 'small', 'regular', etc.
 
-    // Make API request to remove.bg
+    // API request to remove.bg
     const response = await fetch('https://api.remove.bg/v1.0/removebg', {
       method: 'POST',
       headers: {
@@ -127,7 +127,7 @@ const removeBackground = async () => {
   }
 };
 
-// Function to use original image
+// вернуть старое изображение (с фоном)
 const useOriginalImage = () => {
   // Re-read the original file
   const fileInput = document.getElementById('file-upload');
@@ -208,7 +208,6 @@ const submitForm = async () => {
 
     const result = await clothingResponse.json();
     console.log('Вещь успешно добавлена:', result);
-    alert('Вещь успешно добавлена в ваш гардероб!');
 
     // Сбрасываем форму
     formData.value = {
@@ -243,21 +242,22 @@ const submitForm = async () => {
   <div v-else class="add-clothing-form">
 
     <!--фото-->
-    <div class="upload-area defShadow">
-      <input type="file" id="file-upload" @change="handleFileSelect" accept="image/*" hidden=""/>
+    <div class="upload-block">
+      <div class="upload-area defShadow">
+        <input type="file" id="file-upload" @change="handleFileSelect" accept="image/*" hidden=""/>
 
-      <label for="file-upload" class="upload-label">
+        <label for="file-upload" class="upload-label">
 
-        <div v-if="!previewImage" class="upload-label-noPreview">
-          <img class="upload-label-noPreview__img" src="../assets/images/upload.svg">
-          <span class="upload-label-noPreview__span">Перетащите или</span>
-          <span class="button">Выбрать</span>
-        </div>
+          <div v-if="!previewImage" class="upload-label-noPreview">
+            <img class="upload-label-noPreview__img" src="../assets/images/upload.svg">
+            <span class="upload-label-noPreview__span">Перетащите или</span>
+            <span class="button">Выбрать</span>
+          </div>
 
-        <!-- Show processed image if available, otherwise show original -->
-        <img v-else :src="processedImage || previewImage" class="preview-image"/>
-      </label>
-
+          <!-- Show processed image if available, otherwise show original -->
+          <img v-else :src="processedImage || previewImage" class="preview-image"/>
+        </label>
+      </div>
       <!-- Background removal controls -->
       <div v-if="previewImage" class="bg-removal-controls">
         <button
@@ -283,12 +283,13 @@ const submitForm = async () => {
       </div>
     </div>
 
+
     <!--инпуты-->
     <div class="input-area">
 
       <!-- Название вещи -->
       <div class="form-group">
-        <input class="input-area__name-input" v-model="formData.name" type="text" placeholder="Название"/>
+        <input class="input-area__name-input" v-model="formData.name" type="text" placeholder="Название..."/>
       </div>
 
       <!-- Сезоны -->
@@ -296,24 +297,19 @@ const submitForm = async () => {
 
         <div class="select-header" @click="toggleDropdown('seasons')">
           <label>Сезон</label>
-          <div class="select-options">
-            <span>{{ selectedSeasonsText }}</span>
-            <img src="../assets/images/arrow.svg" alt="arrow">
-          </div>
+          <span>{{ selectedSeasonsText }} <img v-if="!dropdowns.seasons" src="../assets/images/arrow.svg" alt="arrow"><img class="arrow-flipped" v-if="dropdowns.seasons" src="../assets/images/arrow.svg" alt="arrow"></span>
         </div>
 
         <div v-if="dropdowns.seasons" class="dropdown-options">
-
-          <div v-for="season in seasons" :key="season" class="option">
+          <div v-for="season in seasons" :key="style" class="option">
             <input
                 type="checkbox"
                 :id="'season-' + season"
                 :value="season"
                 v-model="formData.seasons"
             />
-            <label :for="'season-' + season">{{ season }}</label>
+            <label :for="'season-' + season" class="options">{{ season }}</label>
           </div>
-
         </div>
 
       </div>
@@ -323,7 +319,7 @@ const submitForm = async () => {
 
         <div class="select-header" @click="toggleDropdown('styles')">
           <label>Стиль</label>
-          <span>{{ selectedStylesText }} <img src="../assets/images/arrow.svg" alt="arrow"></span>
+          <span>{{ selectedStylesText }} <img v-if="!dropdowns.styles" src="../assets/images/arrow.svg" alt="arrow"><img class="arrow-flipped" v-if="dropdowns.styles" src="../assets/images/arrow.svg" alt="arrow"></span>
         </div>
 
         <div v-if="dropdowns.styles" class="dropdown-options">
@@ -342,20 +338,22 @@ const submitForm = async () => {
 
       <!-- Размер -->
       <div class="form-group">
+
         <div class="select-header" @click="toggleDropdown('sizes')">
           <label>Размер</label>
-          <span>{{ formData.size || 'Выберите размер' }}</span>
+          <span>{{ formData.size || 'Выберите размер' }} <img v-if="!dropdowns.sizes" src="../assets/images/arrow.svg" alt="arrow"><img class="arrow-flipped" v-if="dropdowns.sizes" src="../assets/images/arrow.svg" alt="arrow"></span>
         </div>
+
         <div v-if="dropdowns.sizes" class="dropdown-options">
           <div v-for="size in sizes" :key="size" class="option">
             <input
-                type="radio"
-                :id="'size-' + size"
-                :value="size"
-                v-model="formData.size"
-                name="size"
-            />
-            <label :for="'size-' + size">{{ size }}</label>
+                  type="radio"
+                  :id="'size-' + size"
+                  :value="size"
+                  v-model="formData.size"
+                  name="size"
+              />
+              <label :for="'size-' + size" class="options">{{ size }}</label>
           </div>
         </div>
       </div>
@@ -402,6 +400,8 @@ const submitForm = async () => {
 
 .select-header > span {
   color: #328BFF;
+  display: flex;
+  gap: 1vh;
 }
 
 .select-options {
@@ -412,6 +412,7 @@ const submitForm = async () => {
   background: none;
   box-shadow: none;
   margin: 0;
+  font-size: 4vh;
 }
 
 .add-clothing-form {
@@ -457,6 +458,7 @@ const submitForm = async () => {
   justify-content: center;
   align-items: center;
   position: relative;
+  margin-bottom: 4vh;
 }
 
 .defShadow:hover {
@@ -470,6 +472,12 @@ const submitForm = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 500px;
+  min-height: 500px;
+}
+
+.arrow-flipped {
+  transform: scale(-1, -1);
 }
 
 .preview-image {
@@ -483,7 +491,6 @@ const submitForm = async () => {
 .bg-removal-controls {
   display: flex;
   gap: 10px;
-  margin-top: 15px;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -494,7 +501,7 @@ const submitForm = async () => {
   font-weight: bold;
   padding: 10px 20px;
   border-radius: 25px;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
 .bg-removal-btn:hover:not(:disabled) {
@@ -513,7 +520,7 @@ const submitForm = async () => {
   font-weight: bold;
   padding: 10px 20px;
   border-radius: 25px;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
 .original-btn:hover {
