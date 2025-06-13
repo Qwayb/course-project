@@ -5,6 +5,8 @@ import Logout from "@/views/Logout.vue";
 import Profile from "@/views/Profile.vue";
 import Clothes from "@/views/Clothes.vue";
 import ClothesAdd from "@/views/ClothesAdd.vue";
+import Outfits from "@/views/Outfits.vue";
+import OutfitsAdd from "@/views/OutfitsAdd.vue";
 
 const routes = [
     {
@@ -61,6 +63,22 @@ const routes = [
         component: ClothesAdd,
         meta: {
             title: 'ClothesAdd'
+        }
+    },
+    {
+        path: '/outfits',
+        name: 'Outfits',
+        component: Outfits,
+        meta: {
+            title: 'Outfits'
+        }
+    },
+    {
+        path: '/outfitsAdd',
+        name: 'OutfitsAdd',
+        component: OutfitsAdd,
+        meta: {
+            title: 'OutfitsAdd'
         }
     },
 ];

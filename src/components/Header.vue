@@ -18,7 +18,7 @@ const store = useUserStore()
       <router-link class="button" to="/">Главная</router-link>
 
       <router-link class="button" to="/clothes">Одежда</router-link>
-      <router-link class="button" to="/">Аутфиты</router-link>
+      <router-link class="button" to="/outfits">Аутфиты</router-link>
       <router-link class="button" to="/">Желания</router-link>
     </div>
 
