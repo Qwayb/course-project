@@ -158,6 +158,8 @@ const deselectAllClothes = () => {
 </script>
 
 <template>
+  <h2>Создать новый аутфит</h2>
+
   <div v-if="!store.isAuthenticated" class="not-authenticated">
     <h2>Доступ запрещен</h2>
     <p>Вы должны быть авторизованы для создания аутфитов</p>
@@ -166,7 +168,6 @@ const deselectAllClothes = () => {
 
   <div v-else class="add-outfit-container">
     <div class="form-section">
-      <h2>Создать новый аутфит</h2>
 
       <!-- Outfit name input -->
       <div class="form-group">
@@ -453,6 +454,10 @@ const deselectAllClothes = () => {
 .no-clothes h3 {
   color: #666;
   margin-bottom: 1rem;
+}
+
+.no-clothes p {
+  margin-bottom: 4vh;
 }
 
 .clothes-selection {

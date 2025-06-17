@@ -11,7 +11,6 @@ const store = useUserStore()
 
       <router-link class="button" to="/login">Одежда</router-link>
       <router-link class="button" to="/login">Аутфиты</router-link>
-      <router-link class="button" to="/login">Желания</router-link>
     </div>
 
     <div v-if="store.isAuthenticated" class="nav_elements">
@@ -19,7 +18,6 @@ const store = useUserStore()
 
       <router-link class="button" to="/clothes">Одежда</router-link>
       <router-link class="button" to="/outfits">Аутфиты</router-link>
-      <router-link class="button" to="/">Желания</router-link>
     </div>
 
     <!---->
