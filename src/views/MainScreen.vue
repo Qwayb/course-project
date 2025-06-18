@@ -105,15 +105,15 @@ const navigateToLogin = () => router.push('/login');
 
     <!-- Authenticated user dashboard -->
     <div v-else class="dashboard">
-      <div class="welcome-back defShadow">
-        <h2>Добро пожаловать, {{ store.currentUser.name }}! 👋</h2>
+      <div class="welcome-back">
+        <h2>Добро пожаловать, {{ store.currentUser.name }}!</h2>
         <p>Готовы создать новый стильный образ?</p>
       </div>
 
       <!-- Quick Stats -->
       <div class="stats-section">
         <div class="stat-card defShadow">
-          <div class="stat-icon">👔</div>
+          <div class="stat-icon"><img src="../assets/images/Book.svg" alt="Clothes"></div>
           <div class="stat-content">
             <div class="stat-number">{{ totalClothes }}</div>
             <div class="stat-label">Вещей в гардеробе</div>
@@ -121,7 +121,7 @@ const navigateToLogin = () => router.push('/login');
         </div>
 
         <div class="stat-card defShadow">
-          <div class="stat-icon">✨</div>
+          <div class="stat-icon"><img src="../assets/images/Rarity.svg" alt="Outfits"></div>
           <div class="stat-content">
             <div class="stat-number">{{ totalOutfits }}</div>
             <div class="stat-label">Готовых аутфитов</div>
@@ -134,7 +134,7 @@ const navigateToLogin = () => router.push('/login');
         <h3>Быстрые действия</h3>
         <div class="action-buttons">
           <button @click="navigateToClothesAdd" class="button action-btn primary">
-            <span class="btn-icon">➕</span>
+            <span class="btn-icon"><img src="../assets/images/upload.svg" alt="Add"></span>
             Добавить одежду
           </button>
           <button @click="navigateToOutfitsAdd" class="button action-btn secondary">
@@ -368,8 +368,8 @@ const navigateToLogin = () => router.push('/login');
 }
 
 .stat-icon {
-  font-size: 2.5rem;
   margin-right: 1rem;
+  max-width: 3vh;
 }
 
 .stat-number {
@@ -395,9 +395,10 @@ const navigateToLogin = () => router.push('/login');
 }
 
 .action-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
 .action-btn {
@@ -431,6 +432,7 @@ const navigateToLogin = () => router.push('/login');
 
 .btn-icon {
   font-size: 1.2rem;
+  max-width: 3vh;
 }
 
 .recent-section {

@@ -465,7 +465,6 @@ const deleteOutfit = async (id) => {
   flex-wrap: wrap;
   gap: 5px;
   padding: 10px;
-  background: #f5f5f5;
 }
 
 .clothing-thumbnail {
@@ -476,8 +475,6 @@ const deleteOutfit = async (id) => {
   height: calc(50% - 2.5px);
   border-radius: 8px;
   overflow: hidden;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .clothing-thumbnail:first-child {

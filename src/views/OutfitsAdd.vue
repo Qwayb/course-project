@@ -146,11 +146,6 @@ const submitForm = async () => {
   }
 };
 
-// Function to select all clothes
-const selectAllClothes = () => {
-  formData.value.selectedClothingIds = clothes.value.map(item => item.id);
-};
-
 // Function to deselect all clothes
 const deselectAllClothes = () => {
   formData.value.selectedClothingIds = [];
@@ -171,12 +166,11 @@ const deselectAllClothes = () => {
 
       <!-- Outfit name input -->
       <div class="form-group">
-        <label for="outfit-name">Название аутфита:</label>
         <input
             id="outfit-name"
             v-model="formData.name"
             type="text"
-            placeholder="Например: летние будни"
+            placeholder="Название аутфита"
             class="input outfit-name-input"
             maxlength="50"
         />
@@ -206,9 +200,10 @@ const deselectAllClothes = () => {
 
       <!-- Action buttons -->
       <div class="action-buttons">
+        <p v-if="selectedClothingItems.length > 5"> Аутфит максимум содержит 5 вещей</p>
         <button
             @click="submitForm"
-            :disabled="isSubmitting || !formData.name.trim() || selectedClothingItems.length === 0"
+            :disabled="isSubmitting || !formData.name.trim() || selectedClothingItems.length === 0 || selectedClothingItems.length > 5"
             class="button submit-button"
         >
           {{ isSubmitting ? 'Создаем...' : 'Создать аутфит' }}
@@ -241,7 +236,6 @@ const deselectAllClothes = () => {
         <div class="selection-header">
           <h3>Выберите вещи для аутфита:</h3>
           <div class="bulk-actions">
-            <button @click="selectAllClothes" class="button bulk-btn">Выбрать все</button>
             <button @click="deselectAllClothes" class="button bulk-btn">Снять выделение</button>
           </div>
         </div>
@@ -371,9 +365,7 @@ const deselectAllClothes = () => {
   align-items: center;
   gap: 0.8rem;
   padding: 0.8rem;
-  background: white;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .selected-item-image {
@@ -381,7 +373,6 @@ const deselectAllClothes = () => {
   height: 50px;
   object-fit: contain;
   border-radius: 8px;
-  background: #f5f5f5;
 }
 
 .selected-item-name {
@@ -412,8 +403,8 @@ const deselectAllClothes = () => {
 
 .action-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .submit-button {
@@ -542,7 +533,6 @@ const deselectAllClothes = () => {
   margin-bottom: 1rem;
   border-radius: 10px;
   overflow: hidden;
-  background: white;
 }
 
 .item-image {
