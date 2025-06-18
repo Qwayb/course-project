@@ -194,8 +194,8 @@ const updateProfile = async () => {
 
     const updatedUser = await response.json()
 
-    // Update the store with new user data
-    store.updateUser(updatedUser)
+    store.currentUser.value = updatedUser
+    localStorage.setItem('user', JSON.stringify(updatedUser))
 
     profileSuccess.value = 'Профиль успешно обновлен!'
     isEditingProfile.value = false

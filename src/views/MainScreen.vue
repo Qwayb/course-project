@@ -133,22 +133,43 @@ const navigateToLogin = () => router.push('/login');
       <div class="quick-actions defShadow">
         <h3>Быстрые действия</h3>
         <div class="action-buttons">
-          <button @click="navigateToClothesAdd" class="button action-btn primary">
-            <span class="btn-icon"><img src="../assets/images/upload.svg" alt="Add"></span>
-            Добавить одежду
-          </button>
-          <button @click="navigateToOutfitsAdd" class="button action-btn secondary">
-            <span class="btn-icon">🎨</span>
-            Создать аутфит
-          </button>
-          <button @click="navigateToClothes" class="button action-btn tertiary">
-            <span class="btn-icon">👗</span>
-            Мой гардероб
-          </button>
-          <button @click="navigateToOutfits" class="button action-btn tertiary">
-            <span class="btn-icon">✨</span>
-            Мои аутфиты
-          </button>
+
+          <router-link to="/clothesAdd" class="button action-btn primary">
+            <img class="btn-icon" src="../assets/images/Upload-main.svg" alt="Add">
+            <p>Добавить одежду</p>
+          </router-link>
+
+          <router-link to="/OutfitsAdd" class="button action-btn secondary">
+            <img class="btn-icon" src="../assets/images/Edit.svg" alt="Edit">
+            <p>Создать аутфит</p>
+          </router-link>
+
+          <router-link to="/clothes" class="button action-btn tertiary">
+            <img class="btn-icon" src="../assets/images/Book.svg" alt="Clothes">
+            <p>Мой гардероб</p>
+          </router-link>
+
+          <router-link to="/outfits" class="button action-btn tertiary">
+            <img class="btn-icon" src="../assets/images/Rarity.svg" alt="Outfits">
+            <p>Мои аутфиты</p>
+          </router-link>
+
+<!--          <button @click="navigateToClothesAdd" class="button action-btn primary">-->
+<!--            <span class="btn-icon"><img src="../assets/images/upload.svg" alt="Add"></span>-->
+<!--            Добавить одежду-->
+<!--          </button>-->
+<!--          <button @click="navigateToOutfitsAdd" class="button action-btn secondary">-->
+<!--            <span class="btn-icon">🎨</span>-->
+<!--            Создать аутфит-->
+<!--          </button>-->
+<!--          <button @click="navigateToClothes" class="button action-btn tertiary">-->
+<!--            <span class="btn-icon">👗</span>-->
+<!--            Мой гардероб-->
+<!--          </button>-->
+<!--          <button @click="navigateToOutfits" class="button action-btn tertiary">-->
+<!--            <span class="btn-icon">✨</span>-->
+<!--            Мои аутфиты-->
+<!--          </button>-->
         </div>
       </div>
 
@@ -325,7 +346,7 @@ const navigateToLogin = () => router.push('/login');
 
 /* Dashboard (Authenticated) */
 .dashboard {
-  max-width: 1200px;
+  max-width: 1354px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -431,7 +452,6 @@ const navigateToLogin = () => router.push('/login');
 }
 
 .btn-icon {
-  font-size: 1.2rem;
   max-width: 3vh;
 }
 
@@ -467,7 +487,7 @@ const navigateToLogin = () => router.push('/login');
 .recent-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .recent-item {
@@ -483,7 +503,7 @@ const navigateToLogin = () => router.push('/login');
 
 .item-image-container {
   height: 120px;
-  background: white;
+  padding: 1vh;
 }
 
 .item-image {
