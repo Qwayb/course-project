@@ -72,7 +72,7 @@ const navigateToLogin = () => router.push('/login');
 
     <!-- Non-authenticated user view -->
     <div v-if="!store.isAuthenticated" class="welcome-section">
-      <div class="hero defShadow">
+      <div class="hero">
         <h1>Добро пожаловать!</h1>
         <p class="hero-description">
           Организуйте свой гардероб и создавайте стильные образы с легкостью

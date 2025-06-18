@@ -194,7 +194,8 @@ const updateProfile = async () => {
 
     const updatedUser = await response.json()
 
-    store.currentUser.value = updatedUser
+    // Fixed: Update store correctly and localStorage
+    store.currentUser = updatedUser
     localStorage.setItem('user', JSON.stringify(updatedUser))
 
     profileSuccess.value = 'Профиль успешно обновлен!'

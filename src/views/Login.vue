@@ -64,7 +64,7 @@ async function handleLogin() {
     <form class="input-block" @submit.prevent="handleLogin">
       <input v-model="form.email" type="email" placeholder="Email" required class="input">
       <input v-model="form.password" type="password" placeholder="Пароль" required class="input">
-      <button type="submit" :disabled="isLoading">
+      <button class="button" type="submit" :disabled="isLoading">
         {{ isLoading ? 'Вход...' : 'Войти' }}
       </button>
       <p v-if="error" class="error">{{ error }}</p>
