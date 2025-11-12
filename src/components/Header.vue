@@ -27,6 +27,10 @@ const store = useUserStore()
       <router-link class="button" to="/login">Вход</router-link>
     </div>
 
+    <dialog>
+      
+    </dialog>
+
     <div v-if="store.isAuthenticated" class="nav_elements">
       <router-link class="button" to="/profile">{{ store.currentUser.name }}</router-link>
     </div>
